@@ -1,16 +1,13 @@
 import express from 'express'
+import { paymentProcess } from './services/paymentProcess.js';
+
+
 const app = express()
 const port = 3000;
 
 app.use( express.json() )
 
-app.post('/webhook', (req, res) => {
-    const data = req.body
-
-    console.log('Webhook recibido: ', data)
-
-    res.status(200).send('Webhook recibido')
-})
+app.post('/webhook', paymentProcess)
 
 app.get('/webhook', (req, res) => {
   res.send('Webhook GET recibido');
