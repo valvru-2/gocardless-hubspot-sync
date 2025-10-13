@@ -1,4 +1,4 @@
-import { createTicket } from "./createTicket.js";
+import { updateOrCreateTicket } from "./processTicket.js";
 
 
 
@@ -18,25 +18,28 @@ export const paymentProcess = async(req, res) => {
         const { resource_type, action } = e
         const { payment } = e.links
         const { cause, description } = e.details
+
+
         
         if(resource_type === "payments" && (action === "charged_back" || action === "failed") ) {
             switch (action) {
                 case "failed":
                     console.log("Es un pago devuelto") 
                     try {
-                        createTicket( payment, cause, description, 'Pago rechazado' )
+                        updateOrCreateTicket( payment, cause, description, 'Pago rechazado' )
                     } catch (error) {
                         console.log('Error al crear el ticket: ', error)
                     }               
                     break;
-                    case "charged_back":
-                        console.log("Es un pago fallido")
-                        try {
-                            createTicket( payment, cause, description, 'Pago devuelto' )
-                        } catch (error) {
-                            console.log('Error al crear el ticket: ', error)
-                        }               
-                    break;
+
+                case "charged_back":
+                    console.log("Es un pago fallido")
+                    try {
+                        updateOrCreateTicket( payment, cause, description, 'Pago devuelto' )
+                    } catch (error) {
+                        console.log('Error al crear el ticket: ', error)
+                    }               
+                break;
                     
                 default:
                     break;
