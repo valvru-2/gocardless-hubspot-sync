@@ -24,7 +24,7 @@ export const paymentProcess = async(req, res) => {
         if(resource_type === "payments" && (action === "charged_back" || action === "failed") ) {
             switch (action) {
                 case "failed":
-                    console.log("Es un pago devuelto") 
+                    console.log("Es un pago fallido") 
                     try {
                         updateOrCreateTicket( payment, cause, description, 'Pago rechazado' )
                     } catch (error) {
@@ -33,7 +33,7 @@ export const paymentProcess = async(req, res) => {
                     break;
 
                 case "charged_back":
-                    console.log("Es un pago fallido")
+                    console.log("Es un pago devuelto")
                     try {
                         updateOrCreateTicket( payment, cause, description, 'Pago devuelto' )
                     } catch (error) {
