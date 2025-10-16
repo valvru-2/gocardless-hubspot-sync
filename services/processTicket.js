@@ -4,7 +4,7 @@ import { Client } from "@hubspot/api-client";
 const hubspotClient = new Client({ accessToken: process.env.TOKEN_HUBSPOT });
 
 
-
+//verifica que no existan tickets con el mismo GocardlessID
 const verifyGoCradlessId = async(gocardlessId) => {
     const url = 'https://api.hubapi.com/crm/v3/objects/tickets/search';
     const body = {
@@ -46,6 +46,7 @@ try {
     }
 }
 
+//crea ticket
 const createTicket = async( gocardlessId, motivo_del_rechazo, descripcion_del_rechazo, nombre ) => {
     const properties = {
         "gocardless_id": gocardlessId,
@@ -64,7 +65,7 @@ const createTicket = async( gocardlessId, motivo_del_rechazo, descripcion_del_re
     }
 }
 
-
+//actualiza ticket si es que encuentra uno que ya existe con el mismo gocardlessID
 const updateTicket = async(ticketId) => {
     const url = `https://api.hubapi.com/crm/v3/objects/tickets/${ticketId}`;
     const properties = {
@@ -88,7 +89,7 @@ const updateTicket = async(ticketId) => {
     }
 }
 
-
+//deja una nota despues de actualizar el ticket existente
 const createNote = async(ticketId, tipoDeRechazo) => {
     const url = 'https://api.hubapi.com/crm/v3/objects/notes';
     const body = {
