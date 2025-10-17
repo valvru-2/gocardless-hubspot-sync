@@ -192,10 +192,3 @@ export const updateOrCreateTicket = async(gocardlessId, motivo_del_rechazo, desc
         console.log(error.message)
     }
 }
-
-updateOrCreateTicket(
-    'GOCARDLESS_ID_PRUEBA',
-    'no tiene dinero',
-    'no tiene plata, está seco seco',
-    'Pago devurechazado'
-)
