@@ -129,6 +129,50 @@ const createNote = async(ticketId, tipoDeRechazo) => {
     }
 }
 
+const createTask = async(ticketId, tipoDeRechazo) => {
+    let fecha = new Date();
+    fecha.setDate( fecha.getDate() + 1 );
+
+    const url = 'https://api.hubapi.com/crm/v3/objects/tasks';
+    const body = {
+        properties: {
+            hs_timestamp: fecha.getTime(),
+            hs_task_body: "Se recibió un nuevo " + tipoDeRechazo + " por un nuevo intento de domiciliación. Este pago ya había sido previamente " + tipoDeRechazo + ".",
+            hs_task_subject: "Nuevo " + tipoDeRechazo + " en intento repetido de pago",
+            hubspot_owner_id: '1287979215' //siempre jessica
+        },
+        associations: [
+            {
+                to: {
+                    id: ticketId // ⚠️ debe ser string
+                },
+                types: [
+                    {
+                        associationCategory: "HUBSPOT_DEFINED",
+                        associationTypeId: 230 // el ID de la asociación
+                    }
+                ]
+            }
+        ]
+    };
+    const options = {
+    method: 'POST',
+    headers: {
+        'Authorization': `Bearer ${process.env.TOKEN_HUBSPOT}`,
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(body)
+    }
+
+    try {
+    const response = await fetch(url, options);
+    const data = await response.json();
+    console.log(data);
+    } catch (error) {
+    console.error(error);
+    }
+}
+
 export const updateOrCreateTicket = async(gocardlessId, motivo_del_rechazo, descripcion_del_rechazo, nombre ) => {
 
     try {
@@ -142,8 +186,16 @@ export const updateOrCreateTicket = async(gocardlessId, motivo_del_rechazo, desc
     
         await updateTicket(id);
         await createNote(id, nombre)
+        createTask(id, nombre)
         
     } catch (error) {
         console.log(error.message)
     }
 }
+
+updateOrCreateTicket(
+    'GOCARDLESS_ID_PRUEBA',
+    'no tiene dinero',
+    'no tiene plata, está seco seco',
+    'Pago devurechazado'
+)
